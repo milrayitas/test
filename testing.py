@@ -2,7 +2,7 @@ import websocket
 from websocket import create_connection
 import json
 import pandas as pd
-import psutil
+# import psutil
 import matplotlib.pyplot as plt
 import time
 
