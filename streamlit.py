@@ -1,41 +1,26 @@
-import datetime as dt
+
+import random
+from itertools import count
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import tmp102
+from matplotlib.animation import FuncAnimation
 
-# Create figure for plotting
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-xs = []
-ys = []
+plt.style.use('fivethirtyeight')
 
-# Initialize communication with TMP102
-tmp102.init()
+x_values = []
+y_values = []
 
-# This function is called periodically from FuncAnimation
-def animate(i, xs, ys):
+index = count()
 
-    # Read temperature (Celsius) from TMP102
-    temp_c = round(tmp102.read_temp(), 2)
 
-    # Add x and y to lists
-    xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
-    ys.append(temp_c)
+def animate(i):
+    x_values.append(next(index))
+    y_values.append(random.randint(0, 5))
+    plt.cla()
+    plt.plot(x_values, y_values)
 
-    # Limit x and y lists to 20 items
-    xs = xs[-20:]
-    ys = ys[-20:]
 
-    # Draw x and y lists
-    ax.clear()
-    ax.plot(xs, ys)
+ani = FuncAnimation(plt.gcf(), animate, 1000)
 
-    # Format plot
-    plt.xticks(rotation=45, ha='right')
-    plt.subplots_adjust(bottom=0.30)
-    plt.title('TMP102 Temperature over Time')
-    plt.ylabel('Temperature (deg C)')
 
-# Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
+plt.tight_layout()
 plt.show()
