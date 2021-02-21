@@ -1,28 +1,19 @@
-import time
-import psutil
+%matplotlib notebook
+import numpy as np
 import matplotlib.pyplot as plt
 
-# %matplotlib notebook
-
-plt.rcParams['animation.html'] = 'jshtml'
+m = 100
+n = 100
+matrix = np.random.normal(0,1,m*n).reshape(m,n)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
+plt.ion()
+
 fig.show()
+fig.canvas.draw()
 
-i = 0
-x, y = [], []
-
-while True:
-    x.append(i)
-    y.append(psutil.cpu_percent())
-    
-    ax.plot(x, y, color='b')
-    
+for i in range(0,100):
+    ax.clear()
+    ax.plot(matrix[i,:])
     fig.canvas.draw()
-    
-    ax.set_xlim(left=max(0, i-50), right=i+50)
-    
-    time.sleep(0.1)
-    i += 1
-plt.close()
