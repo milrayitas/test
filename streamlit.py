@@ -8,6 +8,7 @@ import time
 import datetime as dt
 from datetime import datetime , date
 import pytz
+import plotly
 import plotly.graph_objects as go
 from IPython.display import clear_output
 
