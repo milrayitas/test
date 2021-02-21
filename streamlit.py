@@ -1,35 +1,41 @@
-from collections import deque
-import numpy as np
+import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from matplotlib.ticker import FuncFormatter
+import tmp102
 
-def init():
-    line.set_ydata([np.nan] * len(x))
-    return line,
+# Create figure for plotting
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+xs = []
+ys = []
 
-def animate(i):
-    # Add next value
-    data.append(np.random.randint(0, max_rand))
-    line.set_ydata(data)
-    plt.savefig('e:\\python temp\\fig_{:02}'.format(i))
-    print(i)
-    return line,
+# Initialize communication with TMP102
+tmp102.init()
 
-max_x = 10
-max_rand = 5
+# This function is called periodically from FuncAnimation
+def animate(i, xs, ys):
 
-data = deque(np.zeros(max_x), maxlen=max_x)  # hold the last 10 values
-x = np.arange(0, max_x)
+    # Read temperature (Celsius) from TMP102
+    temp_c = round(tmp102.read_temp(), 2)
 
-fig, ax = plt.subplots()
-ax.set_ylim(0, max_rand)
-ax.set_xlim(0, max_x-1)
-line, = ax.plot(x, np.random.randint(0, max_rand, max_x))
-ax.xaxis.set_major_formatter(FuncFormatter(lambda x, pos: '{:.0f}s'.format(max_x - x - 1)))
-plt.xlabel('Seconds ago')
+    # Add x and y to lists
+    xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+    ys.append(temp_c)
 
-ani = animation.FuncAnimation(
-    fig, animate, init_func=init, interval=1000, blit=True, save_count=10)
+    # Limit x and y lists to 20 items
+    xs = xs[-20:]
+    ys = ys[-20:]
 
+    # Draw x and y lists
+    ax.clear()
+    ax.plot(xs, ys)
+
+    # Format plot
+    plt.xticks(rotation=45, ha='right')
+    plt.subplots_adjust(bottom=0.30)
+    plt.title('TMP102 Temperature over Time')
+    plt.ylabel('Temperature (deg C)')
+
+# Set up plot to call animate() function periodically
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
 plt.show()
